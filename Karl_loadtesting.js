@@ -34,7 +34,7 @@ export default function(){
 	
 	check(sessionRes, {
         'Session API response is 200': (res) => res.status === 200,
-        //'Session ID received': (res) => res.json().SESSION_ID !== undefined,
+        'Session ID received': (res) => res.json().SESSION_ID !== undefined,
     });
 	
 	let sessionId=sessionRes.json().SESSION_ID;
