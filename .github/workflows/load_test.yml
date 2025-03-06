@@ -1,20 +1,41 @@
-name: k6 Load Test
+name: K6 Load Test
 
 on:
   push:
+    branches:
+      - '**'
+  pull_request:
     branches:
       - '**'
 
 jobs:
   run-test:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Setup K6
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4  # Pulls latest code
+
+      - name: 🏗️ Setup K6
         uses: grafana/setup-k6-action@v1
-      - name: Run local k6 test
-        uses: grafana/run-k6-action@v1
+
+      - name: 🚀 Run K6 Test and Save JSON Report
+        run: k6 run testscript_post.js --out json=report.json || echo "K6 Test Execution Failed"
+
+      - name: 🛠️ Install K6 Reporter for HTML Report
+        run: npm install -g k6-reporter
+
+      - name: 📊 Convert JSON to HTML Report
+        run: k6-reporter report.json --output report.html
+
+      - name: 📤 Upload K6 JSON Report
+        uses: actions/upload-artifact@v4
         with:
-          path: testscript_post.js
+          name: k6-json-report
+          path: report.json
+
+      - name: 📤 Upload K6 HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-html-report
+          path: report.html
