@@ -31,7 +31,7 @@ jobs:
           k6 run --out json=results/test_results.json trails.js
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: k6-results
           path: results/trails_results.json
