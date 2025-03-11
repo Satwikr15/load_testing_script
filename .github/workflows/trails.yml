@@ -1,12 +1,10 @@
-name: k6 Performance Test
+name: K6 Performance Test
 
-on:  
+on:
   push:
     branches:
-      - main  # Runs when pushing to main branch
-  pull_request:
-    branches:
-      - main  # Runs on PRs to main
+      - main  # Runs on push to the main branch
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   performance-test:
@@ -14,24 +12,18 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3  # Clones repo
+        uses: actions/checkout@v4
 
-      - name: Install k6
+      - name: Install K6
         run: |
-          curl -s https://packagecloud.io/install/repositories/grafana/stable/script.deb.sh | sudo bash
-          sudo apt install k6 -y
+          sudo apt update
+          sudo apt install -y k6
 
-      - name: Run k6 Performance Test
-        run: k6 run trails.js || true  # Ensure failure doesn't stop pipeline
+      - name: Run K6 Test
+        run: k6 run trails.js  # Ensure your file is named correctly
 
-      - name: Save Test Results
-        if: always()
-        run: |
-          mkdir -p results
-          k6 run --out json=results/test_results.json trails.js
-
-      - name: Upload Test Results
+      - name: Upload K6 Test Results
         uses: actions/upload-artifact@v4
         with:
           name: k6-results
-          path: results/trails_results.json
+          path: results.json  # Ensure your script generates this file
