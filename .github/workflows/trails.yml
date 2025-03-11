@@ -1,0 +1,37 @@
+name: k6 Performance Test
+
+on:  
+  push:
+    branches:
+      - main  # Runs when pushing to main branch
+  pull_request:
+    branches:
+      - main  # Runs on PRs to main
+
+jobs:
+  performance-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3  # Clones repo
+
+      - name: Install k6
+        run: |
+          curl -s https://packagecloud.io/install/repositories/grafana/stable/script.deb.sh | sudo bash
+          sudo apt install k6 -y
+
+      - name: Run k6 Performance Test
+        run: k6 run trails.js || true  # Ensure failure doesn't stop pipeline
+
+      - name: Save Test Results
+        if: always()
+        run: |
+          mkdir -p results
+          k6 run --out json=results/test_results.json trails.js
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: k6-results
+          path: results/trails_results.json
