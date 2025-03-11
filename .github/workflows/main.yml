@@ -1,0 +1,22 @@
+name: Performance Test with k6
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4  # Updated to latest version
+
+      - name: Install k6
+        run: |
+          sudo apt update
+          sudo apt install -y k6
+
+      - name: Run k6 Performance Test
+        run: k6 run trails.js
