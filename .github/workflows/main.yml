@@ -11,12 +11,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4  # Latest version
+        uses: actions/checkout@v4  # Updated to latest version
 
-      - name: 🏗️ Install K6
-        run: |
-          sudo apt update
-          sudo apt install -y k6
+      - name: 🏗️ Setup K6
+        uses: grafana/setup-k6-action@v1
 
       - name: 🚀 Run K6 Test and Save JSON Report
         run: k6 run trails.js --out json=report_trails.json || echo "K6 Test Execution Failed"
@@ -24,7 +22,7 @@ jobs:
       - name: 🛠️ Convert JSON to HTML Report
         run: |
           npm install -g xk6-dashboard  # Correct package for HTML reporting
-          k6 run trails.js --out dashboard > report.html
+          k6 run trails.js --out dashboard > report_trails.html
 
       - name: 📤 Upload K6 JSON Report
         uses: actions/upload-artifact@v4
@@ -37,3 +35,5 @@ jobs:
         with:
           name: k6-html-report
           path: report_trails.html
+
+    
